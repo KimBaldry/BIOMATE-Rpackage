@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3652163245",
+    "hash" : "0",
     "id" : "18B2D312",
     "lastKnownWriteTime" : 1626764530,
     "last_content_update" : 1626764530875,
-    "path" : "~/Projects/BIO-MATE/BIO-MATE/Rpackage/R/export_ref.R",
+    "path" : "~/Projects/BIO-MATE/Rpackage/R/export_ref.R",
     "project_path" : "R/export_ref.R",
     "properties" : {
         "cursorPosition" : "22,30",
-        "scrollLine" : "14"
+        "scrollLine" : "16"
     },
     "relative_order" : 2,
     "source_on_save" : false,
