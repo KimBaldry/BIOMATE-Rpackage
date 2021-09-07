@@ -494,14 +494,20 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     writeLines(paste("#CHLFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
     writeLines(paste("#SOURCED_FROM: ", info$source, "(",subsource$url,")", sep = ""), fd)
     writeLines(paste("#ANALYSIS_METHOD:", paste(submethod$long_AT, "according to the", submethod$Method, "method. See BIOMATE supplementary information and method citations for more information.")), fd)
-    writeLines(paste("#DATASET_CONTACT:", info$PI),fd)
+
     if(is.empty(info$contact)){writeLines(paste("#DATASET_CONTACT:", info$PI),fd)}else{
       writeLines(paste("#DATASET_CONTACT: ", info$PI,"(",info$contact,")", sep = ""),fd)}
 
-    writeLines(paste("#DOI/s:", bib[unlist(strsplit(info$citation,";" ))]$doi), fd)
+    writeLines(paste("#DOI/s:", bib[unlist(strsplit(info$citation,";" ))]$doi, collapse = ","), fd)
     writeLines(paste("#BIOMATE_CITE_TAGS:", cite_tags, collapse = ","), fd)
-    writeLines(paste("#DATA_CITATION/S:", format(bib[cite_tags], style = "text", .bibstyle = "BIOMATE"), collapse = "\n# and"), fd)
-    if(!is.empty(submethod$citation)){writeLines(paste("#METHOD_CITATION/S:", format(bib[submethod$citation], style = "text", .bibstyle = "BIOMATE"), collapse = "\n# and"), fd)}
+
+    dcite = format(bib[cite_tags], style = "text", .bibstyle = "BIOMATE")
+    dcite = gsub(pattern = "\n", replacement = " ", dcite)
+    writeLines(paste("#DATA_CITATION/S:", dcite , collapse = "\n# and"), fd)
+    if(!is.empty(submethod$citation)){
+      mcite = format(bib[submethod$citation], style = "text", .bibstyle = "BIOMATE")
+      mcite = gsub(pattern = "\n", replacement = " ", mcite)
+      writeLines(paste("#METHOD_CITATION/S:", mcite, collapse = "\n# and"), fd)}
 
     if(!is.empty(info$Notes)){writeLines(paste("#NOTE:", info$Notes), fd)}
 
