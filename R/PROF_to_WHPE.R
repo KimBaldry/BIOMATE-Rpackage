@@ -28,7 +28,6 @@
 
 
 PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, trace_file = F){
-  add_bibstyle()
 
   # this small function prevents the drop of midnight 00:00:00
   print.POSIXct2 <- function(x){format(x,"%Y-%m-%d %H:%M:%S %Z")}
@@ -476,7 +475,7 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
       writeLines(paste("#DOI/s:", bib[unlist(strsplit(info$citation,";" ))]$doi), fd)
 
       writeLines(paste("#BIOMATE_CITE_TAGS:", cite_tags, collapse = ","), fd)
-      writeLines(paste("#DATA_CITATION/S:", format(bib[cite_tags], style = text, .bibstyle = "BIOMATE"), collapse = "\n# and"), fd)
+      writeLines(paste("#DATA_CITATION/S:", format(bib[cite_tags], style = "text", .bibstyle = "BIOMATE"), collapse = "\n# and"), fd)
 
       if(!is.null(info$Notes)){writeLines(paste("#NOTE:", info$Notes), fd)}
 
