@@ -427,7 +427,7 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
       header_data$STNNBR = stri_replace_all_regex(header_data$STNNBR, "\\b0*(\\d+)\\b", "$1")
       header_data$CASTNO = gsub("[^[:alnum:]]","",header_data$CASTNO)
       header_data$CASTNO = stri_replace_all_regex(header_data$CASTNO, "\\b0*(\\d+)\\b", "$1")
-      
+
       # # remove repeated character strings
       # # query STNNBR entries and find longest common (forward) substring. Taking the first and last means leading 0's in a count wont be removed
       # # This only deals with leading repitition. e.g TARA01, TARA02...TARA10 becomes 01,02,10
@@ -435,7 +435,7 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
       # sstr <- stri_sub(data2$STNNBR[1], 1, 1:nchar(data2$STNNBR[1]))
       # for(i in 2:nrow(data2)){
       #   #iterively compare strings
-      #   sstr <- na.omit(stri_extract_all_coll(data2$STNNBR[i], sstr, simplify=TRUE)) 
+      #   sstr <- na.omit(stri_extract_all_coll(data2$STNNBR[i], sstr, simplify=TRUE))
       # }
       # if(length(sstr)>0){
       #   ## match the longest one
@@ -443,8 +443,8 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
       #   # double check and remove common substring
       #   if(all(grepl(lcs, data2$STNNBR))){data2$STNNBR = gsub(lcs, "", data2$STNNBR)}
       # }
-      
-      
+
+
 
       # if there is no station info, the station number will be assigned as the file number
       if(is.empty(info$STNNBR)){header_data$STNNBR = which(ctd_files == fl)}
@@ -458,27 +458,33 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
       # writing the file
 
       # file metadata
+      subsource = source_info %>% filter(source == info$source)
+      cite_tags = c(unlist(strsplit(info$citation,";" )), unlist(strsplit(subsource$citations,";" )))
+      cite_tags = cite_tags[is.character(cite_tags)]
+
       fd <- file(new_file_path, open = "wt")
       writeLines(paste("CTD,",gsub("-","",Sys.Date()),userID, sep = ""), fd)
       writeLines("#semi-manual exchange", fd)
       writeLines(paste("#ORIGINAL_CTDFILE:", basename(old_file)), fd)
+      writeLines(paste("#CTDFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
       writeLines(paste("#CITATION:", print(bib[info$citation]), style = text, .bibstyle = "BIOMATE"), fd)
       writeLines(paste("#BIOMATE_CITE_TAG:", info$citation), fd)
-      writeLines(paste("#SOURCED_FROM:", info$source), fd)
-      if(is.null(info$doi)){writeLines(paste("#DOI:", "None assigned"), fd)}else{
-        writeLines(paste("#DOI:", info$doi), fd)}
-      writeLines(paste("#CTDFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
-      writeLines(paste("#PI:", info$PI),fd)
-      writeLines(paste("#INSTITUTION:", info$Institution),fd)
-      if(is.null(info$contact)){writeLines(paste("#contact:", "None assigned"), fd)}else{
-        writeLines(paste("#contact:", info$contact), fd)}
-      #writeLines(paste("#CITATION_FILE:"))
+      writeLines(paste("#SOURCED_FROM: ", info$source, "(",subsource$url,")", sep = ""), fd)
+      writeLines(paste("#DATASET_CONTACT:", info$PI),fd)
+      if(is.empty(info$contact)){writeLines(paste("#DATASET_CONTACT:", info$PI),fd)}else{
+        writeLines(paste("#DATASET_CONTACT: ", info$PI,"(",info$contact,")", sep = ""),fd)}
+
+      writeLines(paste("#DOI/s:", bib[unlist(strsplit(info$citation,";" ))]$doi), fd)
+
+      writeLines(paste("#BIOMATE_CITE_TAGS:", cite_tags, collapse = ","), fd)
+      writeLines(paste("#DATA_CITATION/S:", print(bib[cite_tags], style = text, .bibstyle = "BIOMATE"), collapse = "\n# and"), fd)
+
       if(!is.null(info$Notes)){writeLines(paste("#NOTE:", info$Notes), fd)}
 
       # CTD metadata
-      writeLines("NUMBER_HEADERS = 18", fd)
+      writeLines(paste("NUMBER_HEADERS =", 18), fd)
       writeLines(paste("EXPOCODE =", ex), fd)
-      writeLines(paste("SHIP =",info$Ship),fd)
+      writeLines(paste("SHIP =",platforms$`Platform Name`[match(substr(ex,1,4), platforms$`NODC code`)]),fd)
       writeLines(paste("STNNBR or EVENTNBR =", header_data$STNNBR), fd)
       writeLines(paste("CASTNO =", header_data$CASTNO), fd)
       writeLines(paste("CTDID =", paste(ex,"CTD",header_data$STNNBR,header_data$CASTNO, sep = "_")), fd)
