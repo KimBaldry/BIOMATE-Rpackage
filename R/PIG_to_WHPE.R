@@ -482,7 +482,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     # files = list.files(path = info$path, pattern = info$extention,full.names = T,recursive = F)}
 
     subsource = source_info %>% filter(source == info$source)
-    submethod = method_info %>% filter(method == info$Method, analysis_type == info$analysis_type)
+    submethod = method_info %>% filter(Method == info$Method, analysis_type == info$analysis_type)
     cite_tags = c(unlist(strsplit(info$citation,";" )), unlist(strsplit(subsource$citations,";" )))
     cite_tags = cite_tags[is.character(cite_tags)]
 
