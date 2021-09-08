@@ -44,8 +44,8 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
      data.frame(min = mins[which.min(dists)],diff = dists[which.min(dists)])
      }
   #calc.dist.diff = function(x){distGeo(c(unmatched_df_p$LON[x], unmatched_df_p$LAT[x]), as.matrix(CTD_df[unmatched_df_p$dist_min[x],c("LON","LAT")]))}
-  calc.time.min = function(x){which.min(abs(unlist(lapply(col_t, FUN = function(y){CTD_df[,y] - unmatched_df_t$time_m[x]}))))[1]}
-  calc.time.diff =  function(x){abs(unlist(lapply(col_t, FUN = function(y){CTD_df[,y] - unmatched_df_t$time_m[x]})))[unmatched_df_t$closest_t[x]]}
+  calc.time.min = function(x){which.min(abs(unlist(lapply(col_t, FUN = function(y){difftime(CTD_df[,y], unmatched_df_t$time_m[x], units = "secs")}))))[1]}
+  calc.time.diff =  function(x){abs(unlist(lapply(col_t, FUN = function(y){difftime(CTD_df[,y], unmatched_df_t$time_m[x], units = "secs")})))[unmatched_df_t$closest_t[x]]}
 
   ### directories ###
   # if the output directory does not exist for this layer, create it
@@ -594,11 +594,11 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
         times = as.POSIXct(c(paste(date,time_s), paste(date,time_b), paste(date,time_e)), format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
         # check forward in time, if not add 24 hrs as likely crossed days.
         if(!is.na(times[2]) & !is.na(times[1])){
-          t_diff_check = times[2] - times[1]
+          t_diff_check = difftime(times[2], times[1], units = "secs")
           if(t_diff_check < 0){times[2] = times[2] + (3600*24)}
         }
         if(!is.na(times[3]) & !is.na(times[1])){
-          t_diff_check = times[3] - times[1]
+          t_diff_check = difftime(times[3],  times[1],, units = "secs")
           if(t_diff_check < 0){times[3] = times[3] + (3600*24)}
         }
 
@@ -609,22 +609,22 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
 
         if(length(times) > 0 & !is.na(sub_data2$DATE_analyser[1])){
-        t_diffs = abs(times - as.POSIXct(paste(sub_data2$DATE_analyser[1],sub_data2$TIME_analyser[1])))
+        t_diffs = abs(difftime(times, as.POSIXct(paste(sub_data2$DATE_analyser[1],sub_data2$TIME_analyser[1]),tz = "UTC"), units = "days"))
         CTD_info_exact$t_diff[idx] = t_diffs[which.min(t_diffs)]}else{
           CTD_info_exact$t_diff[idx] = NA}
         # if the same date is recorded come up as match.
-        if(length(times) == 0 & CTD_info_exact$DATE == sub_data2$DATE_analyser[1]){CTD_info_exact$t_diff[idx] = 1}
+        if(length(times) == 0 & CTD_info_exact$DATE[idx] == sub_data2$DATE_analyser[1]){CTD_info_exact$t_diff[idx] = 1}
 
         # get position difference
-        pos = matrix(c(CTD_info_exact$LONGITUDE_s[idx], CTD_info_exact$LATITUDE_s[idx],CTD_info_exact$LONGITUDE_b[idx], CTD_info_exact$LATITUDE_b[idx],CTD_info_exact$LONGITUDE_e[idx], CTD_info_exact$LATITUDE_e[idx]) , ncol = 2)
+        pos = matrix(c(CTD_info_exact$LONGITUDE_s[idx], CTD_info_exact$LATITUDE_s[idx],CTD_info_exact$LONGITUDE_b[idx], CTD_info_exact$LATITUDE_b[idx],CTD_info_exact$LONGITUDE_e[idx], CTD_info_exact$LATITUDE_e[idx]) , ncol = 2, byrow =T)
         pos_diff = distGeo(pos, c(sub_data2$LON_analyser[1], sub_data2$LAT_analyser[1]))
         CTD_info_exact$p_diff[idx] = pos_diff[which.max(pos_diff)]
 
         # identify if missmatch
-        if(!is.na(CTD_info_exact$p_diff[idx]) & !is.na(CTD_info_exact$t_diff[idx])){
+        if(!is.empty(CTD_info_exact$p_diff[idx]) & !is.na(CTD_info_exact$t_diff[idx])){
           #note here t_diff is in days
           # use Johnson 2017 suggestion 8km and 1 day
-        if(CTD_info_exact$p_diff[idx] > 8000 & CTD_info_exact$t_diff[idx] > 1){CTD_info_exact$nomatch[idx] = T}else{CTD_info_exact$nomatch[idx] = F}
+        if(CTD_info_exact$p_diff[idx] > 8000 | CTD_info_exact$t_diff[idx] > 1){CTD_info_exact$nomatch[idx] = T}else{CTD_info_exact$nomatch[idx] = F}
         }else{CTD_info_exact$nomatch[idx] = T}
 
         }
@@ -722,11 +722,11 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
       times = as.POSIXct(c(paste(date,time_s), paste(date,time_b), paste(date,time_e)), format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
       # check forward in time, if not add 24 hrs as likely crossed days.
       if(!is.na(times[2]) & !is.na(times[1])){
-        t_diff_check = times[2] - times[1]
+        t_diff_check = difftime(times[2], times[1], units = "secs")
         if(t_diff_check < 0){times[2] = times[2] + (3600*24)}
       }
       if(!is.na(times[3]) & !is.na(times[1])){
-        t_diff_check = times[3] - times[1]
+        t_diff_check = difftime(times[3], times[1],, units = "secs")
         if(t_diff_check < 0){times[3] = times[3] + (3600*24)}
       }
 
