@@ -921,13 +921,15 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     final_data$DATE = as.character(final_data$DATE)
     final_data$DATE_analyser = as.character(final_data$DATE_analyser)
 
+    # remove rows with no pigment data
+    final_data = final_data[rowSums(matrix(unlist(lapply(as.matrix(final_data[,pig_names]),is.empty)), ncol = length(pig_names))) != length(pig_names),]
+
     # remove columns with entire missing values
     for(cl in 1:ncol(final_data)){
       if(all(is.na(final_data[,cl]))){colnames(final_data)[cl] = NA}
     }
+
     final_data = final_data[,which(!is.na(colnames(final_data)))]
-    # remove rows with no pigment data
-    final_data = final_data[rowSums(matrix(unlist(lapply(as.matrix(final_data[,pig_names]),is.empty)), ncol = length(pig_names))) != length(pig_names),]
     final_data[is.na(final_data)] <- -999
     final_data[final_data == "NA"] <- -999
     # reassign below detection limits value
