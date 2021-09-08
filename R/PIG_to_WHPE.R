@@ -616,7 +616,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
         if(length(times) == 0 & CTD_info_exact$DATE == sub_data2$DATE_analyser[1]){CTD_info_exact$t_diff[idx] = 1}
 
         # get position difference
-        pos = as.matrix(CTD_info_exact$LONGITUDE_s[idx], CTD_info_exact$LATITUDE_s[idx],CTD_info_exact$LONGITUDE_b[idx], CTD_info_exact$LATITUDE_b[idx],CTD_info_exact$LONGITUDE_e[idx], CTD_info_exact$LATITUDE_e[idx] , ncol = 2)
+        pos = matrix(CTD_info_exact$LONGITUDE_s[idx], CTD_info_exact$LATITUDE_s[idx],CTD_info_exact$LONGITUDE_b[idx], CTD_info_exact$LATITUDE_b[idx],CTD_info_exact$LONGITUDE_e[idx], CTD_info_exact$LATITUDE_e[idx] , ncol = 2)
         pos = pos[!is.na(pos)]
         pos_diff = distGeo(pos, c(sub_data2$LON_analyser[1], sub_data2$LAT_analyser[1]))
         CTD_info_exact$p_diff[idx] = pos_diff(which.max(pos_diff))
