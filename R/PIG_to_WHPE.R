@@ -458,6 +458,8 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
       data2$LAT_analyser[dr] = sub(paste("\\",sub("%deg","",info$POSITION_format),sep = ""),"" ,data2$LAT_analyser[dr])
       data2$LON_analyser[dr] = sub(paste("\\",sub("%deg","",info$POSITION_format),sep = ""),"" ,data2$LON_analyser[dr])}
     }
+    data2$LAT_analyser = as.numeric(data2$LAT_analyser)
+    data2$LON_analyser = as.numeric(data2$LON_analyser)
     # transfer to analyser info and wipe info to be replaced by matching CTD data
     data2$STNNBR_analyser = data2$STNNBR
     data2$CASTNO_analyser = data2$CASTNO
@@ -498,16 +500,16 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     if(is.empty(info$contact)){writeLines(paste("#DATASET_CONTACT:", info$PI),fd)}else{
       writeLines(paste("#DATASET_CONTACT: ", info$PI,"(",info$contact,")", sep = ""),fd)}
 
-    writeLines(paste("#DOI/s:", bib[unlist(strsplit(info$citation,";" ))]$doi, collapse = ","), fd)
-    writeLines(paste("#BIOMATE_CITE_TAGS:", cite_tags, collapse = ","), fd)
+    writeLines(paste("#DOI/s:", paste(bib[unlist(strsplit(info$citation,";" ))]$doi, collapse = ",")), fd)
+    writeLines(paste("#BIOMATE_CITE_TAGS:", paste(cite_tags, collapse = ",")), fd)
 
     dcite = format(bib[cite_tags], style = "text", .bibstyle = "BIOMATE")
     dcite = gsub(pattern = "\n", replacement = " ", dcite)
-    writeLines(paste("#DATA_CITATION/S:", dcite , collapse = "\n# and"), fd)
+    writeLines(paste("#DATA_CITATION/S:", paste(dcite , collapse = "\n# and ")), fd)
     if(!is.empty(submethod$citation)){
       mcite = format(bib[submethod$citation], style = "text", .bibstyle = "BIOMATE")
       mcite = gsub(pattern = "\n", replacement = " ", mcite)
-      writeLines(paste("#METHOD_CITATION/S:", mcite, collapse = "\n# and"), fd)}
+      writeLines(paste("#METHOD_CITATION/S:", paste(mcite, collapse = "\n# and ")), fd)}
 
     if(!is.empty(info$Notes)){writeLines(paste("#NOTE:", info$Notes), fd)}
 
@@ -813,11 +815,14 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
             if(exists("joined_t")){
              # join with data 2 IDs
             joined_t_p = left_join(joined_t,unmatched_df_p[,c("STNCAST","dist_min","d_diff")] , by = "STNCAST")
-            }else{joined_t_p = joined_p}
-            data2[un,c("CTD_IDs")] = joined_t_p$CTD_ID}
+            rm(joined_t)
+            }else{joined_t_p = joined_p
+            rm(joined_p)}
+            data2[un,c("CTD_IDs")] = joined_t_p$CTD_ID
+            rm(joined_t_p)}
             }
 
-      rm(unmatched_df, CTD_df,times, joined_t, joined_t_p,joined_p, unmatched_df_p, unmatched_df_t)
+      rm(unmatched_df, CTD_df,times, unmatched_df_p, unmatched_df_t)
       }
     }
     }
