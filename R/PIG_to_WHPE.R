@@ -484,9 +484,11 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     # files = list.files(path = info$path, pattern = info$extention,full.names = T,recursive = F)}
 
     subsource = source_info %>% filter(source == info$source)
+    subsource$citations = trimws(subsource$citations)
     submethod = method_info %>% filter(Method == info$Method, analysis_type == info$analysis_type)
+    submethod$citation = trimws(submethod$citation)
     cite_tags = c(unlist(strsplit(info$citation,";" )), unlist(strsplit(subsource$citations,";" )))
-    cite_tags = cite_tags[is.character(cite_tags)]
+    cite_tags = trimws(cite_tags[is.character(cite_tags)])
 
     # reformat and write new file
     fd <- file(new_file_path, open = "wt")
