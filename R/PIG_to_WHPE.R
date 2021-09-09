@@ -930,7 +930,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     final_data = final_data[rowSums(matrix(unlist(lapply(as.matrix(final_data[,pig_names]),is.empty)), ncol = length(pig_names))) != length(pig_names),]
 
     # remove columns with entire missing values
-    for(cl in 1:ncol(final_data)){
+    for(cl in 19:ncol(final_data)){
       if(all(is.na(final_data[,cl]))){colnames(final_data)[cl] = NA}
     }
 
