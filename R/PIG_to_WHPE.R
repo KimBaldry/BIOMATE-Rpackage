@@ -502,7 +502,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     if(is.empty(info$contact)){writeLines(paste("#DATASET_CONTACT:", info$PI),fd)}else{
       writeLines(paste("#DATASET_CONTACT: ", info$PI,"(",info$contact,")", sep = ""),fd)}
 
-    writeLines(paste("#DOI/s:", paste(bib[unlist(strsplit(info$citation,";" ))]$doi, collapse = ",")), fd)
+    writeLines(paste("#DOI/s:", paste(bib[trimws(unlist(strsplit(info$citation,";" )))]$doi, collapse = ",")), fd)
     writeLines(paste("#BIOMATE_CITE_TAGS:", paste(cite_tags, collapse = ",")), fd)
 
     dcite = format(bib[cite_tags], style = "text", .bibstyle = "BIOMATE")
