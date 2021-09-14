@@ -28,7 +28,7 @@
 
 
 PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, trace_file = F){
- #test
+
   # this small function prevents the drop of midnight 00:00:00
   print.POSIXct2 <- function(x){format(x,"%Y-%m-%d %H:%M:%S %Z")}
   ### Output directory
