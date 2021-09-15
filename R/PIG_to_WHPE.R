@@ -546,7 +546,8 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
       for(idx in 1:nrow(CTD_info_exact)){
         ctd_file = file.path(ctd_path,paste(CTD_info_exact$CTD_ID[idx],"_ctd1.csv",sep = ""))
-        sub_data2 = data2 %>% filter(STNNBR_analyser == CTD_info_exact$STNNBR[idx],CASTNO_analyser == CTD_info_exact$CASTNO[idx])
+        sub_data2 = data2 %>% filter(STNNBR_analyser == CTD_info_exact$STNNBR[idx],CASTNO_analyser == CTD_info_exact$CASTNO[idx], !is.na(LAT_analyser))
+        if(nrow(sub_data2) == 0){next}
 
         # open file and read relevent lines
         f <- file( ctd_file, open = "r" )
