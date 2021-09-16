@@ -921,9 +921,6 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     writeLines("missing_value = -999", fd)
     writeLines("not_detected = -888", fd)
 
-    writeLines(toString(colnames(final_data)), fd)
-    # units = lapply(colnames(final_data),function(x){if(paste(x,"_u",sep = "") %in% colnames(info)){info[,paste(x,"_u",sep = "")]}else{NA}})
-    writeLines(toString(ordered_units), fd)
 
     # assign missing value number
     final_data$DATE = as.character(final_data$DATE)
@@ -932,12 +929,17 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     # remove rows with no pigment data
     final_data = final_data[rowSums(matrix(unlist(lapply(as.matrix(final_data[,pig_names]),is.empty)), ncol = length(pig_names))) != length(pig_names),]
 
-    # remove columns with entire missing values
-    for(cl in 19:ncol(final_data)){
-      if(all(is.na(final_data[,cl]))){colnames(final_data)[cl] = NA}
-    }
-
     final_data = final_data[,which(!is.na(colnames(final_data)))]
+    # remove columns with entire missing values
+    for(cl in ncol(final_data):19){
+      if(all(is.na(final_data[,cl]))){colnames(final_data)[cl] = NA
+      ordered_units = ordered_units[-cl]
+      }
+    }
+    writeLines(toString(colnames(final_data)), fd)
+    # units = lapply(colnames(final_data),function(x){if(paste(x,"_u",sep = "") %in% colnames(info)){info[,paste(x,"_u",sep = "")]}else{NA}})
+    writeLines(toString(ordered_units), fd)
+
     final_data[is.na(final_data)] <- -999
     final_data[final_data == "NA"] <- -999
     # reassign below detection limits value
