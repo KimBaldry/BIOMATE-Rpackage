@@ -638,7 +638,8 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
       # asign CTD_IDs
       data2$CTD_IDs[sdx] = paste(ex,"CTD",data2$STNNBR_analyser[sdx],data2$CASTNO_analyser[sdx],sep = "_")
-       }
+     }
+      rm(sub_data2)
       }
 
     #was trying to find similar matches.... waste of time
@@ -825,7 +826,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
             rm(joined_t_p)}
             }
 
-      rm(unmatched_df, CTD_df,times, unmatched_df_p, unmatched_df_t)
+      rm(unmatched_df, CTD_df,times, unmatched_df_p, unmatched_df_t, un)
       }
     }
     }
@@ -929,13 +930,14 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     # remove rows with no pigment data
     final_data = final_data[rowSums(matrix(unlist(lapply(as.matrix(final_data[,pig_names]),is.empty)), ncol = length(pig_names))) != length(pig_names),]
 
-    final_data = final_data[,which(!is.na(colnames(final_data)))]
+
     # remove columns with entire missing values
     for(cl in ncol(final_data):19){
       if(all(is.na(final_data[,cl]))){colnames(final_data)[cl] = NA
       ordered_units = ordered_units[-cl]
       }
     }
+    final_data = final_data[,which(!is.na(colnames(final_data)))]
     writeLines(toString(colnames(final_data)), fd)
     # units = lapply(colnames(final_data),function(x){if(paste(x,"_u",sep = "") %in% colnames(info)){info[,paste(x,"_u",sep = "")]}else{NA}})
     writeLines(toString(ordered_units), fd)
