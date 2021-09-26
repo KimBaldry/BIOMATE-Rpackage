@@ -603,7 +603,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
           if(t_diff_check < 0){times[2] = times[2] + (3600*24)}
         }
         if(!is.na(times[3]) & !is.na(times[1])){
-          t_diff_check = difftime(times[3],  times[1],, units = "secs")
+          t_diff_check = difftime(times[3],  times[1], units = "secs")
           if(t_diff_check < 0){times[3] = times[3] + (3600*24)}
         }
 
@@ -732,7 +732,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
         if(t_diff_check < 0){times[2] = times[2] + (3600*24)}
       }
       if(!is.na(times[3]) & !is.na(times[1])){
-        t_diff_check = difftime(times[3], times[1],, units = "secs")
+        t_diff_check = difftime(times[3], times[1], units = "secs")
         if(t_diff_check < 0){times[3] = times[3] + (3600*24)}
       }
 
