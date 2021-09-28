@@ -639,7 +639,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
       # asign CTD_IDs
       data2$CTD_IDs[sdx] = paste(ex,"CTD",data2$STNNBR_analyser[sdx],data2$CASTNO_analyser[sdx],sep = "_")
      }
-      rm(sub_data2)
+      rm(sub_data2, times)
       }
 
     #was trying to find similar matches.... waste of time
@@ -826,11 +826,12 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
             rm(joined_t_p)}
             }
 
-      rm(unmatched_df, CTD_df,times, unmatched_df_p, unmatched_df_t, un)
+      rm(unmatched_df, CTD_df, unmatched_df_p, unmatched_df_t)
       }
     }
-    }
 
+    }
+rm(un)
 
     # append CTD_ID, STNNBR, CASTNO, LAT, LON, DATE, TIME
     # Now get the data from files that have identified matches
