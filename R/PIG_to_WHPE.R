@@ -614,11 +614,11 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
 
         if(length(times) > 0 & !is.na(sub_data2$DATE_analyser[1])){
-        t_diffs = abs(difftime(times, as.POSIXct(paste(sub_data2$DATE_analyser[1],sub_data2$TIME_analyser[1]),tz = "UTC"), units = "days"))
+        t_diffs = abs(difftime(times, as.POSIXct(paste(sub_data2$DATE_analyser[1],sub_data2$TIME_analyser[1]),tz = "UTC"), units = "secs"))
         CTD_info_exact$t_diff[idx] = t_diffs[which.min(t_diffs)]}else{
           CTD_info_exact$t_diff[idx] = NA}
         # if the same date is recorded come up as match.
-        if(length(times) == 0 & CTD_info_exact$DATE[idx] == sub_data2$DATE_analyser[1]){CTD_info_exact$t_diff[idx] = 1}
+        if(length(times) == 0 & CTD_info_exact$DATE[idx] == sub_data2$DATE_analyser[1]){CTD_info_exact$t_diff[idx] = 1*60*60*24}
 
         # get position difference
         pos = matrix(c(CTD_info_exact$LONGITUDE_s[idx], CTD_info_exact$LATITUDE_s[idx],CTD_info_exact$LONGITUDE_b[idx], CTD_info_exact$LATITUDE_b[idx],CTD_info_exact$LONGITUDE_e[idx], CTD_info_exact$LATITUDE_e[idx]) , ncol = 2, byrow =T)
@@ -629,7 +629,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
         if(!is.empty(CTD_info_exact$p_diff[idx]) & !is.na(CTD_info_exact$t_diff[idx])){
           #note here t_diff is in days
           # use Johnson 2017 suggestion 8km and 1 day
-        if(CTD_info_exact$p_diff[idx] > 8000 | CTD_info_exact$t_diff[idx] > 1){CTD_info_exact$nomatch[idx] = T}else{CTD_info_exact$nomatch[idx] = F}
+        if(CTD_info_exact$p_diff[idx] > 8000 | CTD_info_exact$t_diff[idx] > 1*60*60*24){CTD_info_exact$nomatch[idx] = T}else{CTD_info_exact$nomatch[idx] = F}
         }else{CTD_info_exact$nomatch[idx] = T}
 
         }
@@ -781,7 +781,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
             #                                   }
 
             # check it is within 3 hours and assign CTD_ID
-            unmatched_df_t = unmatched_df_t %>% filter(!is.na(closest_t), t_diff < t_thresh)
+            unmatched_df_t = unmatched_df_t %>% filter(!is.na(closest_t), t_diff < t_thresh*60*60)
 
             # Any matches?
             if(nrow(unmatched_df_t) > 0){
