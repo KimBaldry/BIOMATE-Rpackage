@@ -11,10 +11,10 @@
 #' @param file_name The name of the file to be split
 #' @param delim The text delimiter of the file to be split
 #' @param line_start The line in which the data table starts (i.e. the line the variable headers are on)
-#' @param expo_split Set to T if working with EXPOCODE synonyms data to split further into EXPOCODES. Note you need a supplementry netadata file in this case, see description for more details.
+#' @param expo_split Set to T if working with EXPOCODE synonyms data to split further into EXPOCODES. Note you need a supplementry metadata file in this case, see description for more details.
 #' @param synonym_var_name Only needed when expo_split = T. The variable, containing EXPOCODE synonyms, that the file is to be split by.
-#' @param station_split Set to T if working with PROF/CTD data to split further into profileing stations. This will output multiple files to the output folder
-#' @param station_var_name Only needed is station_split = T. The variable containing station IDs
+#' @param station_split Set to T if working with PROF/CTD data to split further into profiling stations. This will output multiple files to the output folder
+#' @param station_var_name Only needed if station_split = T. The variable containing station IDs
 #' @param fillcell logical. If TRUE then in case the rows have unequal length, blank fields are implicitly added. See ‘fill’ and "Details" in "read.table" for more information.
 #'
 #' @import util
@@ -89,7 +89,7 @@ split_delim_file = function(path, file_name, delim, line_start = 1, expo_split =
       write.csv(sub_sub_data, file = file.path(path,"split",paste(sn_2,"_from_", fname,".csv", sep = "")), row.names = F)
 
       tf = file(file.path(path,"split",paste("Data_amendments",Sys.Date(),".txt", sep = "")),open = "wt")
-      writeLines(paste("The following files were created from",file_name,"using the function split_compiled_delim_file():"),tf)
+      writeLines(paste("The following files were created from",file_name,"using the function split_delim_file():"),tf)
       created_files = list.files(file.path(path, "split"),pattern = ".csv")
       for(sp in created_files)
       {
