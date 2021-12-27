@@ -957,8 +957,8 @@ rm(un)
 
     print(paste("row",rw,"EXPOCODE",ex,"SOURCE",info$source,"METHOD",info$Method,"successfully run"))
     ### checks
-    final_data$DEPTH = as.numeric(final_data$DEPTH)
-    final_data$DEPTH[which(final_data$CTD_IDs == "U")] = "U"
+    # final_data$DEPTH = as.numeric(final_data$DEPTH)
+    # final_data$DEPTH[final_data$CTD_IDs == "U"] = "U"
     if(any(final_data$STNNBR == -999)){print(paste("Warning:There is no station number assigned for a data point in",rw,ex," Is this point underway?"))}
     #if(any(final_data$LATITUDE == -999 & final_data$STNNBR != "U" & final_data$DEPTH > 10 & !is.empty(final_data$DEPTH))){print(paste("Warning:There is some ctd data not matched, or missing",rw,ex,"for this many measurements", length(which(final_data$LATITUDE == -999 & final_data$STNNBR != "U" & final_data$DEPTH > 10 & !is.empty(final_data$DEPTH)))))}
     rm(final_data)
