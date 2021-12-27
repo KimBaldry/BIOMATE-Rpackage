@@ -20,6 +20,7 @@
 #' @import tidyr
 #' @import readr
 #' @import geosphere
+#' @import lubridate
 #'
 #' @export
 
@@ -385,7 +386,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
 
     }else{
-      if(!is.empty(info$DATE_analyser)){data2$DATE_analyser = as.Date(as.character(data2$DATE_analyser),format = info$DATE_analyser_format)
+      if(!is.empty(info$DATE_analyser) & !is.POSIXct(data2$DATE_analyser[1])){data2$DATE_analyser = as.Date(as.character(data2$DATE_analyser),format = info$DATE_analyser_format)
       }
 
       # times
@@ -398,7 +399,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
         }
 
       }else{
-        if(!is.empty(info$TIME_analyser))
+        if(!is.empty(info$TIME_analyser)  )
         {data2$TIME_analyser = as.POSIXct(as.character(data2$TIME_analyser),format = info$TIME_analyser_format,tz = info$TZ)
         if(attributes(data2$TIME_analyser)$tzone != "UTC"){attributes(data2$TIME_analyser)$tzone = "UTC"}}
         }}
