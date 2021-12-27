@@ -25,13 +25,13 @@ split_delim_file(
 
 \item{line_start}{The line in which the data table starts (i.e. the line the variable headers are on)}
 
-\item{expo_split}{Set to T if working with EXPOCODE synonyms data to split further into EXPOCODES. Note you need a supplementry netadata file in this case, see description for more details.}
+\item{expo_split}{Set to T if working with EXPOCODE synonyms data to split further into EXPOCODES. Note you need a supplementry metadata file in this case, see description for more details.}
 
 \item{synonym_var_name}{Only needed when expo_split = T. The variable, containing EXPOCODE synonyms, that the file is to be split by.}
 
-\item{station_split}{Set to T if working with PROF/CTD data to split further into profileing stations. This will output multiple files to the output folder}
+\item{station_split}{Set to T if working with PROF/CTD data to split further into profiling stations. This will output multiple files to the output folder}
 
-\item{station_var_name}{Only needed is station_split = T. The variable containing station IDs}
+\item{station_var_name}{Only needed if station_split = T. The variable containing station IDs}
 
 \item{fillcell}{logical. If TRUE then in case the rows have unequal length, blank fields are implicitly added. See ‘fill’ and "Details" in "read.table" for more information.}
 }
