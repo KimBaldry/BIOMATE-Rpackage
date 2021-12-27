@@ -17,7 +17,7 @@
 #' @param station_var_name Only needed if station_split = T. The variable containing station IDs
 #' @param fillcell logical. If TRUE then in case the rows have unequal length, blank fields are implicitly added. See ‘fill’ and "Details" in "read.table" for more information.
 #'
-#' @import util
+#' @import utils
 #' @import tools
 #' @import dplyr
 #'
