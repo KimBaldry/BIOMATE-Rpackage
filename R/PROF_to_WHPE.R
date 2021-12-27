@@ -297,16 +297,17 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
         header_data$TIME_e = sub(as.Date(date_time),"",print.POSIXct2(date_time))}
 
       }else{
-        if(!is.empty(info$TIME_s) & !is.POSIXct(header_data$TIME_s[1]))
-        {date_time = as.POSIXct(as.character(header_data$TIME_s),format = info$DATE_format,tz = info$TZ)
+        if(!is.empty(info$TIME_s) )
+        {if(!is.POSIXct(header_data$TIME_s[1])){
+          date_time = as.POSIXct(as.character(header_data$TIME_s),format = info$DATE_format,tz = info$TZ)}
         if(attributes(date_time)$tzone != "UTC"){attributes(date_time)$tzone = "UTC"}
         header_data$TIME_s = sub(as.Date(date_time),"",print.POSIXct2(date_time))}
-        if(!is.empty(info$TIME_b) & !is.POSIXct(header_data$TIME_b[1]))
-        {date_time = as.POSIXct(as.character(header_data$TIME_b),format = info$DATE_format,tz = info$TZ)
+        if(!is.empty(info$TIME_b))
+        {if(!is.POSIXct(header_data$TIME_b[1])){date_time = as.POSIXct(as.character(header_data$TIME_b),format = info$DATE_format,tz = info$TZ)}
         if(attributes(date_time)$tzone != "UTC"){attributes(date_time)$tzone = "UTC"}
         header_data$TIME_b = sub(as.Date(date_time),"",print.POSIXct2(date_time))}
-        if(!is.empty(info$TIME_e) & !is.POSIXct(header_data$TIME_e[1]))
-        {date_time = as.POSIXct(as.character(header_data$TIME_e),format = info$DATE_format,tz = info$TZ)
+        if(!is.empty(info$TIME_e))
+        {if(!is.POSIXct(header_data$TIME_e[1])){date_time = as.POSIXct(as.character(header_data$TIME_e),format = info$DATE_format,tz = info$TZ)}
         if(attributes(date_time)$tzone != "UTC"){attributes(date_time)$tzone = "UTC"}
         header_data$TIME_e = sub(as.Date(date_time),"",print.POSIXct2(date_time))}
       }}
