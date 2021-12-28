@@ -172,7 +172,7 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
         data = read_table2(fl,col_names = F, skip = b-1, na = as.character(info$missing_value),col_types = cols())
         if(info$source == "MGDS"){
           ## this format has a manual insertion. The header lines arent available for all data columns and they break the rectangular format
-          headers = as.character(fread(fl,stringsAsFactors = F, skip = n-1, nrows = 1, header = F, keepLeadingZeros = T, tz = info$TZ))
+          headers = as.character(fread(fl,stringsAsFactors = F, skip = n-1, nrows = 1, header = F, keepLeadingZeros = T))
         }else{
          # get the header line
           headers = fread(fl, skip = n-1, nrows = 1, header = F, stringsAsFactors = F, keepLeadingZeros = T)
@@ -181,10 +181,14 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
 
 
         }else{
-      if(is.na(info$missing_value)){data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1,strip.white = T, header = F, keepLeadingZeros = T, tz = info$TZ))
-}else{
-        data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1, na.strings = as.character(info$missing_value),strip.white = T, header = F, keepLeadingZeros = T, tz = info$TZ))
-
+          if(is.na(info$missing_value)){data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1,strip.white = T, header = F, keepLeadingZeros = T))
+          if(any(grepl("POSIXct",sapply(data,class)))){
+            data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1,strip.white = T, header = F, keepLeadingZeros = T, colClasses = list(character = grep(("POSIXct",sapply(data,class))))))
+          }
+          }else{
+            data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1, na.strings = as.character(info$missing_value),strip.white = T, header = F, keepLeadingZeros = T))
+            if(any(grepl("POSIXct",sapply(data,class)))){
+              data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1, na.strings = as.character(info$missing_value),strip.white = T, header = F, keepLeadingZeros = T, colClasses = list(character = grep(("POSIXct",sapply(data,class))))))
       }
       # get the header line
       headers = as.character(fread(fl,stringsAsFactors = F, skip = n-1, nrows = 1, header = F))
