@@ -207,12 +207,12 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
               }else{
                 if(is.na(info$missing_value)){data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1,strip.white = T, header = F, keepLeadingZeros = T))
                 if(any(grepl("POSIXct",sapply(data,class)))){
-                  data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1,strip.white = T, header = F, keepLeadingZeros = T, colClasses = list(character = grep(("POSIXct",sapply(data,class))))))
+                  data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1,strip.white = T, header = F, keepLeadingZeros = T, colClasses = list(character = grep("POSIXct",sapply(data,class)))))
                 }
                 }else{
                   data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1, na.strings = as.character(info$missing_value),strip.white = T, header = F, keepLeadingZeros = T))
                   if(any(grepl("POSIXct",sapply(data,class)))){
-                    data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1, na.strings = as.character(info$missing_value),strip.white = T, header = F, keepLeadingZeros = T, colClasses = list(character = grep(("POSIXct",sapply(data,class))))))
+                    data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1, na.strings = as.character(info$missing_value),strip.white = T, header = F, keepLeadingZeros = T, colClasses = list(character = grep("POSIXct",sapply(data,class)))))
                   }
                 }
               }
