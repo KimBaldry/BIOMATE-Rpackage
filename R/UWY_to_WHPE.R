@@ -446,8 +446,6 @@ UWY_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     }
     final_data = final_data[,which(!is.na(colnames(final_data)))]
     writeLines(toString(colnames(final_data)), fd)
-    heads = paste(colnames(final_data),"_u",sep = "")
-    writeLines(toString(info[,..heads]), fd)
     units = lapply(colnames(final_data),function(x){if(paste(x,"_u",sep = "") %in% colnames(info)){info[,paste(x,"_u",sep = "")]}else{NA}})
     writeLines(toString(c(ordered_units,units)), fd)
 
