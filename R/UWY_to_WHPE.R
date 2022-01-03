@@ -130,7 +130,7 @@ UWY_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
             # write to a file to check header line is picked and variables have been grabbed. This file is for debugging purposes
             # remove this later
             tf = file(file.path(out_dir,paste("Check_headers",Sys.Date(),".txt", sep = "")),open = "at")
-            writeLines(paste(old_file),tf)
+            writeLines(paste(fl),tf)
             writeLines(paste("The header line picked:",line),tf)
             writeLines(paste("The variables found:",data_vars[which(header_in_line ==T)]),tf)
             writeLines("All good?",tf)
