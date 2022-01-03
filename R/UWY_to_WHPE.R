@@ -292,7 +292,6 @@ UWY_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
     ### reformat date and time
     if(!is.empty(info$DATE) & !all(is.na(data2$DATE))){
-      if(nchar(data2$DATE[which(!is.empty(data2$DATE))[1]])>12 & grepl("AADC",info$source)){data2$DATE = substr(data2$DATE,1,12)}} #problems with old AADC data
     if(info$DATE_format == "sec_since_year_start"){
       Y = substr(ex,5,8)
       if(!is.empty(info$DATE)){data2$DATE = as.POSIXct(paste(Y,"01","01", sep = "-"), tz = info$TZ) + as.numeric(data2$DATE)
