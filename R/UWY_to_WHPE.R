@@ -439,14 +439,14 @@ UWY_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
 
     # remove columns with entire missing values
-    for(cl in ncol(final_data):19){
+    for(cl in ncol(final_data):4){
       if(all(is.na(final_data[,cl]))){colnames(final_data)[cl] = NA
       ordered_units = ordered_units[-cl]
       }
     }
     final_data = final_data[,which(!is.na(colnames(final_data)))]
     writeLines(toString(colnames(final_data)), fd)
-    units = lapply(colnames(final_data),function(x){if(paste(x,"_u",sep = "") %in% colnames(info)){info[,paste(x,"_u",sep = "")]}else{NA}})
+    units = lapply(colnames(final_data),function(x){if(paste(x,"_u",sep = "") %in% colnames(info)){info[,which(colnames(info) == paste(x,"_u",sep = ""))]}else{NA}})
     writeLines(toString(c(ordered_units,units)), fd)
 
     final_data[is.na(final_data)] <- -999
