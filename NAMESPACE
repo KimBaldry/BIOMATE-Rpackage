@@ -3,6 +3,7 @@
 export(PIG_to_WHPE)
 export(PROF_to_WHPE)
 export(SS_CTDsplit)
+export(UWY_to_WHPE)
 export(add_bibstyle)
 export(export_ref)
 export(is.empty)
