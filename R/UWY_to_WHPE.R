@@ -124,17 +124,13 @@ UWY_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
           if(length(line)== 0){next}
           # searching for data variables in headers
           dv = data_vars[which(!unlist(lapply(info[,..data_vars],is.empty)))]
-          header_in_line = unlist(lapply(dv,function(x){grepl(info[,..x],line, fixed = T)}))
-
-          if(length(which(header_in_line == T) ) < n_headers & length(which(header_in_line == T) ) > 2){missing = dv[!header_in_line]
-          missing = missing[missing %in% pig_names[pig_names != "Notes" & !grepl("_u", pig_names)]]
-          msg = paste("Header assignments might not be right. Missing underway headers in",fl,"for",ex, "are:", paste(missing, collapse = ","))
-          }
-          # if there are at least three data_vars that apear, break this is likely the header line
-          if(length(which(header_in_line == T) ) >= n_headers  & !substr(line,1,1) %in% c("!","#")){
-            # write to a file to check header line is picked and variables have been grabbed. This can be removed. Maybe put a switch on for debugging.
+          header_in_line = unlist(lapply(data_vars,function(x){grepl(info[,..x],line, fixed = T)}))
+          # if there are at least three data_vars that apear, break this is likeley the header line. print the header line.
+          if(length(which(header_in_line == T) ) > 2 & substr(line,1,1) != "#"){
+            # write to a file to check header line is picked and variables have been grabbed. This file is for debugging purposes
+            # remove this later
             tf = file(file.path(out_dir,paste("Check_headers",Sys.Date(),".txt", sep = "")),open = "at")
-            writeLines(paste(fl),tf)
+            writeLines(paste(old_file),tf)
             writeLines(paste("The header line picked:",line),tf)
             writeLines(paste("The variables found:",data_vars[which(header_in_line ==T)]),tf)
             writeLines("All good?",tf)
