@@ -27,6 +27,9 @@
 
 UWY_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, t_thresh = 6, d_thresh = 1000){
 
+  # this small function prevents the drop of midnight 00:00:00
+  print.POSIXct2 <- function(x){format(x,"%Y-%m-%d %H:%M:%S %Z")}
+
   ### output directory ###
   # if the output directory does not exist for this layer, create it
   out_dir = file.path(path_out,"underway_sensors")
