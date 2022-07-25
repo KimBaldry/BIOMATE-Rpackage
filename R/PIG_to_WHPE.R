@@ -833,12 +833,11 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
             rm(joined_t_p)}
             }
 
-      rm(unmatched_df, CTD_df, unmatched_df_p, unmatched_df_t)
       }
     }
-
+    rm(unmatched_df, CTD_df,times, joined_t, joined_t_p,joined_p, unmatched_df_p, unmatched_df_t)
     }
-rm(un)
+  rm(un)
 
     # append CTD_ID, STNNBR, CASTNO, LAT, LON, DATE, TIME
     # Now get the data from files that have identified matches
@@ -921,7 +920,7 @@ rm(un)
     if(any(is.na(final_data$CTD_match))){
       final_data$CTD_match[is.na(final_data$CTD_match)] = 0
       }
-    rm(data2,un)
+    rm(data2)
 
     writeLines(paste("NUMBER_HEADERS = 6"), fd)
     writeLines(paste("EXPOCODE =", ex), fd)
