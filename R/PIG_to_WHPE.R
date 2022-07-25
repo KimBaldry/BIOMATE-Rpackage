@@ -921,7 +921,7 @@ rm(un)
     if(any(is.na(final_data$CTD_match))){
       final_data$CTD_match[is.na(final_data$CTD_match)] = 0
       }
-    rm(data2)
+    rm(data2,un)
 
     writeLines(paste("NUMBER_HEADERS = 6"), fd)
     writeLines(paste("EXPOCODE =", ex), fd)
