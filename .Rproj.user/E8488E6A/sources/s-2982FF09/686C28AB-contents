@@ -21,13 +21,11 @@
 #' @import readr
 #' @import geosphere
 #' @import lubridate
-#' @import XML
-#' @import httr
 #'
 #' @export
 
 
-PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, t_thresh = 6, d_thresh = 1000){
+PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, t_thresh = 6, d_thresh = 1000){
 
   # this small function prevents the drop of midnight 00:00:00
   print.POSIXct2 <- function(x){format(x,"%Y-%m-%d %H:%M:%S %Z")}
@@ -57,26 +55,9 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
   {dir.create(out_dir)}
 
   # check there is a link to a profiling_sensor layer
-  ctd_path = "https://data.imas.utas.edu.au/attachments/3e0afabb-ebd2-4972-bb67-8626c2643129/reformatted_data/profiling_sensors/"
-
-  df <- readHTMLTable(content(httr::GET("https://data.imas.utas.edu.au/attachments/3e0afabb-ebd2-4972-bb67-8626c2643129/reformatted_data/profiling_sensors/"), "text"))
-
-  ctd_files = basename(grep(".csv", df$`NULL`$Name, value = TRUE, fixed = TRUE))
-
-
-  ctd_path2 = "https://github.com/KimBaldry/BIO-MATE/tree/main/product_data/next_version/reformatted_data"
-  repo = "KimBaldry/BIO-MATE"
-  req <- httr::GET(paste("https://api.github.com/repos", repo,
-                         "git/trees/main?recursive=1", sep = "/"))
-  if (req$status_code == 404) {
-    req <- httr::GET(paste("https://api.github.com/repos", repo,
-                           "git/trees/master?recursive=1", sep = "/"))
-  }
-  httr::stop_for_status(req)
-  filelist <-unlist(lapply(httr::content(req)$tree, "[", "path"), use.names = F)
-  ctd_files2 = basename(grep("product_data/next_version/reformatted_data/profiling_sensors/", filelist, value = TRUE, fixed = TRUE))
-
-  if(length(ctd_files2) > 0){ctd_files = c(ctd_files,ctd_files2)}
+  ctd_path = file.path(path_out,"profiling_sensors")
+  if(!file.exists(ctd_path))
+  {stop(paste(ctd_path, "does not exist. Please link to the profiling sensors layer"))}
 
   #to link to UWY - to be implemented ***
   #uwy_path = file.path(path_out,"underway_sensors")
@@ -123,7 +104,7 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
     if(is.empty(info$header_sep)){info$header_sep = ""}
 
     # list variables that have info in the files
-    vars = colnames(info)[-c(1:which(colnames(info) == "Method"))]
+    vars = colnames(info)[-c(1:which(colnames(info) == "start_data_var"))]
     vars = vars[!unlist(lapply(info[,..vars], is.empty))]
     # list variables where data is stored in file headers - if any
     if(any(grepl("header-",info[,..vars]))){header_vars = vars[grepl("header-",info[,..vars])]
@@ -135,7 +116,7 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
       rm_head = colnames(ID_info)[!grepl("header-",ID_info)]
       ID_info = ID_info[,..rm_head]}
 
-    if(is.na(info$Underway_ID)){info$Underway_ID = ""}
+
     # list all of the files in the data stream
 
     files = list.files(path = info$path, pattern = info$extention,full.names = T,recursive = F)
@@ -221,7 +202,6 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
               #tryCatch({data = as.data.frame(fread(fl,stringsAsFactors = F, skip = n, na.strings = info$missing_value,strip.white = T , header = F))}, warning=function(w) print(fl))
 
               # rectangular data shouldnt be read with fread
-              if(is.na(info$delim)){info$delim = ""}
               if(info$delim == "rect"){
                 data = read_table(fl,col_names = F, skip = b-1, na = info$missing_value,col_types = cols())
               }else{
@@ -380,7 +360,6 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
     #
 
     ### Underway data assignment ### This process seems round-about. Can Mike improve it?
-
     if(nchar(info$Underway_ID)>0){
       if(info$Underway_ID == "all"){data2$STNNBR = "U"}else{
     if(length(grep(uwy_val,uwy_data))>0){
@@ -522,7 +501,7 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
     fd <- file(new_file_path, open = "wt")
     writeLines(paste(info$Data_type,gsub("-","",Sys.Date()),userID, sep = ""), fd)
     writeLines("#semi-manual exchange", fd)
-    writeLines(paste("#ORIGINAL_CHLFILE/S:", input$upload$name), fd)
+    writeLines(paste("#ORIGINAL_CHLFILE/S:", paste(files, collapse="; ")), fd)
     writeLines(paste("#CHLFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
     writeLines(paste("#SOURCED_FROM: ", info$source, "(",subsource$url,")", sep = ""), fd)
     writeLines(paste("#ANALYSIS_METHOD:", paste(submethod$long_AT, "according to the", submethod$Method, "method. See BIOMATE supplementary information and method citations for more information.")), fd)
@@ -549,7 +528,7 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
     data2$CTD_IDs = NA
     # list available CTD_IDs
     if(any(is.na(data2$STNNBR))){
-
+    ctd_files = list.files(ctd_path, pattern = ".csv", full.names = F)
 
     data2$CTD_IDs[data2$STNNBR_analyser == "U"] = "U"
     # ctd_ids from CTD files
@@ -573,11 +552,7 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
     if(nrow(CTD_info_exact) > 0){
 
       for(idx in 1:nrow(CTD_info_exact)){
-        if(!grepl(CTD_info_exact$CTD_ID[idx],ctd_files2)){
-          ctd_file = file.path(ctd_path,paste(CTD_info_exact$CTD_ID[idx],"_ctd1.csv",sep = ""))}else{
-            file.path(ctd_path2,paste(CTD_info_exact$CTD_ID[idx],"_ctd1.csv",sep = ""))
-          }
-
+        ctd_file = file.path(ctd_path,paste(CTD_info_exact$CTD_ID[idx],"_ctd1.csv",sep = ""))
         sub_data2 = data2 %>% filter(STNNBR_analyser == CTD_info_exact$STNNBR[idx],CASTNO_analyser == CTD_info_exact$CASTNO[idx], !is.na(LAT_analyser))
         if(nrow(sub_data2) == 0){next}
 
@@ -709,16 +684,13 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
 
     if(nrow(CTD_info) == 0){print(paste("There is no CTD data for", ex))}else{
     for(ctd in CTD_info$CTD_ID){
-      if(!grepl(ctd,ctd_files2)){
-        ctd_file = file.path(ctd_path,paste(ctd,"_ctd1.csv",sep = ""))}else{
-          file.path(ctd_path2,paste(ctd,"_ctd1.csv",sep = ""))
-      }
+      ctd_file = file.path(ctd_path,paste(ctd,"_ctd1.csv",sep = ""))
 
       time_s = NA
       time_b = NA
       time_e = NA
       # open file and read relevent lines
-      f <- file(ctd_file, open = "r" )
+      f <- file( ctd_file, open = "r" )
 
       while( TRUE ){
         line <- readLines( f, 1L ,skipNul = T)
@@ -875,10 +847,7 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
     # set up CTD data frame
     if(length(CTD_list) > 0){
     for(ctd in CTD_list){
-      if(!grepl(ctd,ctd_files2)){
-        ctd_file = file.path(ctd_path,paste(ctd,"_ctd1.csv",sep = ""))}else{
-          file.path(ctd_path2,paste(ctd,"_ctd1.csv",sep = ""))
-        }
+      ctd_file = file.path(ctd_path,paste(ctd,"_ctd1.csv",sep = ""))
 
       idx = which(data2$CTD_IDs == ctd)
 
