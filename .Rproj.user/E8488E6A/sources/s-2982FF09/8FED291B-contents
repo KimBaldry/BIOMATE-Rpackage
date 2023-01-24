@@ -16,7 +16,6 @@ library(BIOMATE)
 library(RCurl)
 library(git2r)
 library(bibtex)
-library(XML)
 add_bibstyle()
 
 #To implement:
