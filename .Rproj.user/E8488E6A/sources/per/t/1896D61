@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1674561126057.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3622172090",
+    "id" : "1896D61",
+    "lastKnownWriteTime" : 1674561161,
+    "last_content_update" : 1674561161721,
+    "path" : "~/Projects/BIO-MATE/BIO-MATE/.gitignore",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "4,24",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "gitignore"
+}

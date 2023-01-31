@@ -16,7 +16,19 @@ library(BIOMATE)
 library(RCurl)
 library(git2r)
 library(bibtex)
+library(XML)
+library(httr)
+library(lubridate)
+library(tools)
+library(data.table)
+library(ncdf4)
+library(stringi)
+library(tidyr)
+library(readr)
+library(geosphere)
+library(lubridate)
 add_bibstyle()
+source("./PIG_to_WHPE_share.R")
 
 #To implement:
 # add data citation tags
@@ -44,14 +56,21 @@ expocodes = unique(c(pig_summary$EXPOCODE, underway_summary$EXPOCODE, profiling_
 
 
 #set up Git
+
 dirs = list.dirs(tempdir(),recursive = F)
 if(length(grep("BIO-MATE",dirs)) == 0){
   path <- file.path(tempfile(pattern="BIO-MATE-"), "BIO-MATE")
   dir.create(path, recursive=TRUE)
-  repo <- clone("https://github.com/KimBaldry/BIO-MATE", path)
+  repo <- clone("https://github.com/KimBaldry/BIO-MATE", path,credentials = git2r::cred_token())
 }else{path = file.path(grep("BIO-MATE",dirs,value = T)[1], "BIO-MATE")
-git2r::pull(path)
+git2r::pull(path, credentials = git2r::cred_token())
+repo = repository(path)
 }
+set
+config(repo,
+       user.name = "Kimberlee Baldry",
+       user.email = "baldry.kimberlee@gmail.com",token = cred)
+
 
 # 1. user interface object
 ui <- navbarPage(
@@ -353,35 +372,38 @@ server <- function(input, output, session){
 
     process_meta = t(values$p_meta[,3])
     colnames(process_meta) = values$p_meta[,1]
-    out_dir = file.path(path,"product_data/next_version","submitted_metadata")
-    out_dir2 = file.path(path,"product_data/next_version","reformatted_data")
-    out_dir3 = file.path(path,"product_data/next_version/package_data")
-    if(!file.exists(out_dir))
-    {dir.create(out_dir)}
-    if(!file.exists(out_dir2))
-    {dir.create(out_dir2)}
-    if(!file.exists(out_dir3))
-    {dir.create(out_dir3)}
-    write.table(process_meta, file.path(out_dir, paste(input$stream, "_meta.csv", sep = "")),row.names = F,sep = ",", append = T)
+    dir1 = file.path(path,"product_data/next_version","submitted_metadata")
+    dir2 = file.path(path,"product_data/next_version","reformatted_data")
+    dir3 = file.path(path,"product_data/next_version/package_data")
+    if(!file.exists(dir1))
+    {dir.create(dir1)}
+    if(!file.exists(dir2))
+    {dir.create(dir2)}
+    if(!file.exists(dir3))
+    {dir.create(dir3)}
+    if(!file.exists(file.path(dir1, paste(input$stream, "_meta.csv", sep = "")))){write.table(process_meta, file.path(dir1, paste(input$stream, "_meta.csv", sep = "")),row.names = F,sep = ",", append = T,col.names = T)}else{
+    write.table(process_meta, file.path(dir1, paste(input$stream, "_meta.csv", sep = "")),row.names = F,sep = ",", append = T,col.names = F)}
     print("written meta")
 
     if(input$stream == "PROF"){
-      BIOMATE::PROF_to_WHPE_share(out_dir,out_dir2)
+      BIOMATE::PROF_to_WHPE_share(dir1,dir2)
     }
-    if(input$stream == "PIG"){PIG_to_WHPE_share(out_dir,out_dir2)}
-    if(input$stream == "POC"){POC_to_WHPE_share(out_dir,out_dir2)}
-    if(input$stream == "UWY"){UWY_to_WHPE_share(out_dir,out_dir2)}
+    if(input$stream == "PIG"){PIG_to_WHPE_share(dir1,dir2)}
+    if(input$stream == "POC"){POC_to_WHPE_share(dir1,dir2)}
+    if(input$stream == "UWY"){UWY_to_WHPE_share(dir1,dir2)}
 
     print("reformatted files")
-    method_info = new_method_info
-    source_info = new_source_info
-    bib = new_bib
-    save(method_info, underway_summary, source_info, bib, countries, platforms, file = file.path(out_dir3,"BIOMATE.rda")) # save new package data
+    method_info = values$new_method
+    source_info = values$new_source
+    bib = values$new_bib
+    save(method_info, underway_summary, source_info, bib, countries, platforms, file = file.path(dir3,"BIOMATE.rda")) # save new package data
     print("saved data")
 
     # write new summary files
-    # write.csv(pig_summary, file.path(out_dir, paste(input$stream, "_meta.csv", sep = "")))
-    commit(repo, "BIO-SHARE Submission")
+    # write.csv(pig_summary, file.path(dir1, paste(input$stream, "_meta.csv", sep = "")))
+    git2r::add(repo, list.files(c(dir1,dir2,dir3),full.names = T))
+    git2r::commit(repo, "BIO-SHARE Submission",session = T)
+    git2r::push(repo, credentials = cred)
     print("comitment made")
     # add USERID option
 
@@ -405,7 +427,7 @@ server <- function(input, output, session){
     },
     content = function(file){
 
-      files <- list.files(out_dir, out_dir2,include.dirs = F)
+      files <- list.files(dir1, dir2,include.dirs = F)
       #create the zip file
       zip(file,files)
     }

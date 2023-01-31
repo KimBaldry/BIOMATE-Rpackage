@@ -29,6 +29,7 @@
 
 PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, t_thresh = 6, d_thresh = 1000){
 
+
   # this small function prevents the drop of midnight 00:00:00
   print.POSIXct2 <- function(x){format(x,"%Y-%m-%d %H:%M:%S %Z")}
   calc.dist.min = function(x){
@@ -59,17 +60,17 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
   # check there is a link to a profiling_sensor layer
   ctd_path = "https://data.imas.utas.edu.au/attachments/3e0afabb-ebd2-4972-bb67-8626c2643129/reformatted_data/profiling_sensors/"
 
-  df <- readHTMLTable(content(httr::GET("https://data.imas.utas.edu.au/attachments/3e0afabb-ebd2-4972-bb67-8626c2643129/reformatted_data/profiling_sensors/"), "text"))
+  df <- readHTMLTable(httr::content(httr::GET("https://data.imas.utas.edu.au/attachments/3e0afabb-ebd2-4972-bb67-8626c2643129/reformatted_data/profiling_sensors/"), "text"))
 
   ctd_files = basename(grep(".csv", df$`NULL`$Name, value = TRUE, fixed = TRUE))
 
 
   ctd_path2 = "https://github.com/KimBaldry/BIO-MATE/tree/main/product_data/next_version/reformatted_data"
-  repo = "KimBaldry/BIO-MATE"
-  req <- httr::GET(paste("https://api.github.com/repos", repo,
+  repos = "KimBaldry/BIO-MATE"
+  req <- httr::GET(paste("https://api.github.com/repos", repos,
                          "git/trees/main?recursive=1", sep = "/"))
   if (req$status_code == 404) {
-    req <- httr::GET(paste("https://api.github.com/repos", repo,
+    req <- httr::GET(paste("https://api.github.com/repos", repos,
                            "git/trees/master?recursive=1", sep = "/"))
   }
   httr::stop_for_status(req)
@@ -101,7 +102,7 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
 
   ### reformat files ###
   # loop through the entries in the metadata file
-  for(rw in row_start:row_end)
+  for(rw in row_end)
   {
     # relevent metadata for the row rw
     info = meta[rw,]
@@ -522,7 +523,7 @@ PIG_to_WHPE_share = function(file_path, path_out,userID = "IMASUTASKB",row_start
     fd <- file(new_file_path, open = "wt")
     writeLines(paste(info$Data_type,gsub("-","",Sys.Date()),userID, sep = ""), fd)
     writeLines("#semi-manual exchange", fd)
-    writeLines(paste("#ORIGINAL_CHLFILE/S:", input$upload$name), fd)
+    writeLines(paste("#ORIGINAL_CHLFILE/S:", list.files(info$path,full.names = F,recursive = F, include.dirs = F)), fd)
     writeLines(paste("#CHLFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
     writeLines(paste("#SOURCED_FROM: ", info$source, "(",subsource$url,")", sep = ""), fd)
     writeLines(paste("#ANALYSIS_METHOD:", paste(submethod$long_AT, "according to the", submethod$Method, "method. See BIOMATE supplementary information and method citations for more information.")), fd)
