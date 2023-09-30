@@ -27,7 +27,7 @@
 
 
 
-PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, trace_file = F){
+PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, trace_file = F, version = "1.0"){
 
   # this small function prevents the drop of midnight 00:00:00
   print.POSIXct2 <- function(x){format(x,"%Y-%m-%d %H:%M:%S %Z")}
@@ -472,6 +472,7 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
 
       fd <- file(new_file_path, open = "wt")
       writeLines(paste("CTD,",gsub("-","",Sys.Date()),userID, sep = ""), fd)
+      writeLines(paste("#version=",version) fd)
       writeLines("#semi-manual exchange", fd)
       writeLines(paste("#ORIGINAL_CTDFILE:", basename(old_file)), fd)
       writeLines(paste("#CTDFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
@@ -479,6 +480,7 @@ PROF_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,
       if(is.empty(info$contact)){writeLines(paste("#DATASET_CONTACT:", info$PI),fd)}else{
         writeLines(paste("#DATASET_CONTACT: ", info$PI,"(",info$contact,")", sep = ""),fd)}
       writeLines(paste("#DOI/s:", paste(bib[unlist(strsplit(info$citation,";" ))]$doi, collapse = ",")), fd)
+      writeLines(paste("#URL:", paste(bib[trimws(unlist(strsplit(info$citation,";" )))]$url, collapse = ",")), fd)
       writeLines(paste("#BIOMATE_CITE_TAGS:", paste(cite_tags, collapse = ",")), fd)
 
       dcite = format(bib[cite_tags], style = "text", .bibstyle = "BIOMATE")

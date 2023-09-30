@@ -25,7 +25,7 @@
 #' @export
 
 
-POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, t_thresh = 6, d_thresh = 1000){
+POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,row_end = NA, t_thresh = 6, d_thresh = 1000, version = "1.0"){
 
   # this small function prevents the drop of midnight 00:00:00
   print.POSIXct2 <- function(x){format(x,"%Y-%m-%d %H:%M:%S %Z")}
@@ -500,6 +500,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     # reformat and write new file
     fd <- file(new_file_path, open = "wt")
     writeLines(paste(info$Data_type,gsub("-","",Sys.Date()),userID, sep = ""), fd)
+    writeLines(paste("#version=",version) fd)
     writeLines("#semi-manual exchange", fd)
     writeLines(paste("#ORIGINAL_CHLFILE/S:", paste(files, collapse="; ")), fd)
     writeLines(paste("#CHLFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
@@ -510,6 +511,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
       writeLines(paste("#DATASET_CONTACT: ", info$PI,"(",info$contact,")", sep = ""),fd)}
 
     writeLines(paste("#DOI/s:", paste(bib[trimws(unlist(strsplit(info$citation,";" )))]$doi, collapse = ",")), fd)
+    writeLines(paste("#URL:", paste(bib[trimws(unlist(strsplit(info$citation,";" )))]$url, collapse = ",")), fd)
     writeLines(paste("#BIOMATE_CITE_TAGS:", paste(cite_tags, collapse = ",")), fd)
 
     dcite = format(bib[cite_tags], style = "text", .bibstyle = "BIOMATE")
