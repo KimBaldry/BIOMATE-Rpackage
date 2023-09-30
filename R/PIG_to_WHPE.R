@@ -500,7 +500,7 @@ PIG_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     # reformat and write new file
     fd <- file(new_file_path, open = "wt")
     writeLines(paste(info$Data_type,gsub("-","",Sys.Date()),userID, sep = ""), fd)
-    writeLines(paste("#version=",version) fd)
+    writeLines(paste("#version=",version), fd)
     writeLines("#semi-manual exchange", fd)
     writeLines(paste("#ORIGINAL_CHLFILE/S:", paste(files, collapse="; ")), fd)
     writeLines(paste("#CHLFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
