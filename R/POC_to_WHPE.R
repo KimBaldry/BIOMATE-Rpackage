@@ -75,7 +75,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
   # set up poc names and the final data frame
   all_headers = c("CTD_match","DATE","TIME_s","TIME_b","TIME_e","LATITUDE","LONGITUDE","STNNBR",	"CASTNO",	"DATE_analyser",	"TIME_analyser",	"LAT_analyser",	"LON_analyser","Sample_ID",	"BOTTLE",	"DEPTH")
-  pig_names = colnames(meta)[-c(1:which(colnames(meta) == "POC_u"))]
+  pig_names = colnames(meta)[-c(1:which(colnames(meta) == "PON_u"))]
   pig_names = pig_names[pig_names != "Notes"] # dont require Notes
   all_headers = c(all_headers, pig_names)
   pig_id_data = c("STNNBR",	"CASTNO","DATE_analyser","TIME_analyser",	"LAT_analyser",	"LON_analyser")
@@ -285,6 +285,17 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
           idx = colnames(dataf) %in% pig_names
           dataf[,idx] = dataf[,idx]*1000
         }
+        if(info$POC_u == "UMOL/L"){
+          dataf$POC =  dataf$POC*12.0107
+          dataf$DOC =  dataf$DOC*12.0107
+          dataf$PON =  dataf$PON*28.02
+          dataf$DON =  dataf$DON*28.02
+          dataf$TPP =  dataf$TPP*30.97
+        }
+        if(!is.empty(info$PON_u) & info$POC_u %in% c("MG/M3",c("UG/L"))){
+          dataf$PON = dataf$PON*28.02
+        }
+
 
         f <- file( fl, open = "r" )
 
