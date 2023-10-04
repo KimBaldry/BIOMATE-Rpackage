@@ -172,6 +172,7 @@ UWY_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
             data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1,strip.white = T, header = F, keepLeadingZeros = T, colClasses = list(character = grep("POSIXct",sapply(data,class)))))
           }
           }else{
+
             data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1, na.strings = as.character(info$missing_value),strip.white = T, header = F, keepLeadingZeros = T))
             if(any(grepl("POSIXct",sapply(data,class)))){
               data = as.data.frame(fread(fl,stringsAsFactors = F, skip = b-1, na.strings = as.character(info$missing_value),strip.white = T, header = F, keepLeadingZeros = T, colClasses = list(character = grep("POSIXct",sapply(data,class)))))
@@ -193,7 +194,10 @@ UWY_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
         # reassign missing value
         for(cl in 1:ncol(data)){
-          data[which(data[,cl] == info$missing_value),cl] <- NA}
+          if(info$missing_value == "NAN9s"){
+            data[which(data[,cl] %in% c("NAN","9.99","99.99","999.99","9999.99","999","9999","99","9")),cl] <- NA
+          }else{
+          data[which(data[,cl] == info$missing_value),cl] <- NA}}
 
         # get the variables listed in the metadata file and create a new reformatted data frame
         grabbed_vars = info[,..data_vars]
