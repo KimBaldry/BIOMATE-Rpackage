@@ -11,7 +11,8 @@ UWY_to_WHPE(
   row_start = 1,
   row_end = NA,
   t_thresh = 6,
-  d_thresh = 1000
+  d_thresh = 1000,
+  version = "1.0"
 )
 }
 \arguments{

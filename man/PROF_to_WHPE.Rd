@@ -10,7 +10,8 @@ PROF_to_WHPE(
   userID = "IMASUTASKB",
   row_start = 1,
   row_end = NA,
-  trace_file = F
+  trace_file = F,
+  version = "1.0"
 )
 }
 \arguments{
