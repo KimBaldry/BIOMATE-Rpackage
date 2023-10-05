@@ -70,6 +70,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
   if(!file.exists(meta_path)){stop(paste("Error: There is no file named POC_meta.csv located in the dirctory",file_path))}
   # read it in
   meta = fread(file = meta_path,header = T,strip.white = T,stringsAsFactors = F)
+  meta[is.na(meta)] = ""
   if(length(which(!is.na(meta[,ncol(meta)]))) == 0){meta = meta[,-ncol(meta)]}
   if(is.na(row_end)){row_end = nrow(meta)}
 
