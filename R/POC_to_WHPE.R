@@ -232,7 +232,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
         for(cl in 1:ncol(data)){
           data[which(data[,cl] == info$missing_value),cl] <- NA}
         # identify underway data
-        if(nchar(info$Underway_ID)>0 & info$Underway_ID != "all"){
+        if(!is.empty(info$Underway_ID) & info$Underway_ID != "all"){
           uwy_var = strsplit(info$Underway_ID,split = "-")[[1]][1]
           uwy_val = sub(paste(uwy_var,"-",sep = ""),"",info$Underway_ID)
           uwy_ref = data[,uwy_var]}
@@ -376,7 +376,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     #
 
     ### Underway data assignment ### This process seems round-about. Can Mike improve it?
-    if(nchar(info$Underway_ID)>0){
+    if(!is.empty(info$Underway_ID)){
       if(info$Underway_ID == "all"){data2$STNNBR = "U"}else{
         if(length(grep(uwy_val,uwy_data))>0){
           data2$STNNBR[grep(uwy_val,uwy_data)] = "U"}}}
