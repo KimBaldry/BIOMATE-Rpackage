@@ -286,11 +286,16 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
           dataf[,idx] = dataf[,idx]*1000
         }
         if(info$POC_u == "UMOL/L"){
-          dataf$POC =  dataf$POC*12.0107
-          dataf$DOC =  dataf$DOC*12.0107
-          dataf$PON =  dataf$PON*28.02
-          dataf$DON =  dataf$DON*28.02
-          dataf$TPP =  dataf$TPP*30.97
+          if(any(colnames(dataf) == "POC")){
+          dataf$POC =  dataf$POC*12.0107}
+          if(any(colnames(dataf) == "DOC")){
+          dataf$DOC =  dataf$DOC*12.0107}
+          if(any(colnames(dataf) == "PON")){
+          dataf$PON =  dataf$PON*28.02}
+          if(any(colnames(dataf) == "DON")){
+          dataf$DON =  dataf$DON*28.02}
+          if(any(colnames(dataf) == "TPP")){
+          dataf$TPP =  dataf$TPP*30.97}
         }
         if(!is.empty(info$PON_u) & info$POC_u %in% c("MG/M3",c("UG/L"))){
           dataf$PON = dataf$PON*28.02
