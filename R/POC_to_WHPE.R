@@ -520,7 +520,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     writeLines(paste(info$Data_type,gsub("-","",Sys.Date()),userID, sep = ""), fd)
     writeLines(paste("#version=",version), fd)
     writeLines("#semi-manual exchange", fd)
-    writeLines(paste("#ORIGINAL_CHLFILE/S:", paste(files, collapse="; ")), fd)
+    writeLines(paste("#ORIGINAL_POCFILE/S:", paste(files, collapse="; ")), fd)
     writeLines(paste("#CHLFILE_MOD_DATE:",Sys.time(),"AEST"), fd)
     writeLines(paste("#SOURCED_FROM: ", info$source, "(",subsource$url,")", sep = ""), fd)
     writeLines(paste("#ANALYSIS_METHOD:", paste(submethod$long_AT, "according to the", submethod$Method, "method. See BIOMATE supplementary information and method citations for more information.")), fd)
