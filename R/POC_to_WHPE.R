@@ -116,7 +116,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     if(any(grepl("header-",ID_info))){
       rm_head = colnames(ID_info)[!grepl("header-",ID_info)]
       ID_info = ID_info[,..rm_head]}
-
+    if(is.empty(info$POSITION_format)){info$POSITION_format = ""}
 
     # list all of the files in the data stream
 
@@ -399,6 +399,8 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
     ### reformat date and time
     if(!is.empty(info$DATE_analyser) & !all(is.na(data2$DATE_analyser))){
       if(nchar(data2$DATE_analyser[which(!is.empty(data2$DATE_analyser))[1]])>12 & grepl("AADC",info$source)){data2$DATE_analyser = substr(data2$DATE_analyser,1,12)}} #problems with old AADC data
+    if(!is.empty(info$TIME_analyser))
+    {
     if(info$DATE_analyser_format == "sec_since_year_start"){
       Y = substr(ex,5,8)
       if(!is.empty(info$DATE_analyser)){data2$DATE_analyser = as.POSIXct(paste(Y,"01","01", sep = "-"), tz = info$TZ) + as.numeric(data2$DATE_analyser)
@@ -411,7 +413,7 @@ POC_to_WHPE = function(file_path, path_out,userID = "IMASUTASKB",row_start = 1,r
 
     }else{
       if(!is.empty(info$DATE_analyser) & !is.POSIXct(data2$DATE_analyser[1])){data2$DATE_analyser = as.Date(as.character(data2$DATE_analyser),format = info$DATE_analyser_format)
-      }
+      }}
 
       # times
       if(info$DATE_analyser_format != info$TIME_analyser_format){
